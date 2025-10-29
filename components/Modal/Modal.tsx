@@ -34,7 +34,8 @@ export default function Modal({ onClose, children }: ModalProps) {
       className={styles.backdrop}
       onClick={handleClick}
       role="dialog"
-      aria-label="Close modal">
+      aria-label="Close modal"
+      >
       <div className={styles.modal}>
         {children}
       </div>

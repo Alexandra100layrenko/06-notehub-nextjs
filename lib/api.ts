@@ -4,6 +4,8 @@ import type { Note, NoteTag } from '../app/types/note';
 
 export type { Note } from '../app/types/note';
 
+
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://notehub-public.goit.study/api';
 const API_TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN ?? '';
 
@@ -32,17 +34,24 @@ export interface FetchNotesParams {
   sortBy: 'created' | 'updated';
 }
 
-export const fetchNotes = async ({
-  page = 1,
-  perPage = 12,
-  search = '',
-  tag,
-  sortBy = 'created',
-}: Partial<FetchNotesParams> = {}): Promise<FetchNotesResponse> => {
-  const params: FetchNotesParams = { page, perPage, search, sortBy };
-  if (tag) params.tag = tag;
-  const { data } = await api.get<FetchNotesResponse>('/notes', { params });
-  return data;
+export const fetchNotes = async (
+  params: Partial<FetchNotesParams> = {}
+): Promise<FetchNotesResponse> => {
+  const finalParams: FetchNotesParams = { page: 1, perPage: 12, search: '', sortBy: 'created', ...params };
+  if (params.tag) finalParams.tag = params.tag;
+
+  try {
+    const { data } = await api.get<FetchNotesResponse>('/notes', { params: finalParams });
+    return data;
+  } catch (err: unknown) {
+    // безопасная проверка типа ошибки
+    if (axios.isAxiosError(err)) {
+      console.error('API fetchNotes error', err.response?.status, err.response?.data);
+      throw new Error(err.response?.data?.message || 'Failed to fetch notes');
+    }
+    console.error('Unexpected error', err);
+    throw new Error('Failed to fetch notes');
+  }
 };
 
 export const getNotes = fetchNotes;
