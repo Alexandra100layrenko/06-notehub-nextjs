@@ -1,14 +1,14 @@
 // app/notes/Notes.client.tsx
 'use client';
 
-import NotesClientPage from '@/components/NotesClientPage/NotesClientPage';
-import { fetchNotes } from '@/lib/api';
 import { useEffect, useState } from 'react';
+import NotesClientPage from '@/components/NotesClientPage/NotesClientPage';
+import { fetchNotes, type FetchNotesResponse } from '@/lib/api';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 
 export default function NotesClient() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<FetchNotesResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,5 +22,6 @@ export default function NotesClient() {
   if (loading) return <Loader />;
   if (error) return <ErrorMessage />;
 
-  return <NotesClientPage initialData={data} />;
+  return <NotesClientPage initialData={data!} />;
 }
+
