@@ -1,4 +1,4 @@
-// components/NotesPage/NotesPage.tsx
+// components/NotesClientPage/NotesClientPage.tsx
 'use client';
 
 import { useState, useEffect } from 'react';

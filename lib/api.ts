@@ -1,8 +1,8 @@
 // lib/api.ts
 import axios from 'axios';
-import type { Note, NoteTag } from '../app/types/note';
+import type { Note, NoteTag } from '../types/note';
 
-export type { Note } from '../app/types/note';
+export type { Note } from '../types/note';
 
 
 

@@ -1,10 +1,13 @@
-// app/notes/[id]/page.tsx
+// app/notes/[id]/NoteDetails.tsx
+'use client';
+
 import NoteDetailsClient from '@/components/NoteDetails/NoteDetails';
-import { fetchNoteById } from '@/lib/api';
+import type { Note } from '@/lib/api';
 
-type Props = { readonly params: { id: string } };
+type Props = {
+  readonly initialNote: Note;
+};
 
-export default async function NoteDetailsPage({ params }: Props) {
-  const note = await fetchNoteById(params.id);
-  return <NoteDetailsClient initialNote={note} />;
+export default function NoteDetailsClientPage({ initialNote }: Props) {
+  return <NoteDetailsClient initialNote={initialNote} />;
 }

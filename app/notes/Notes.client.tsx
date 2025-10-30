@@ -1,10 +1,13 @@
-// app/notes/page.tsx
+// app/notes/Notes.client.tsx
+'use client';
+
 import NotesClientPage from '@/components/NotesClientPage/NotesClientPage';
-import { fetchNotes } from '@/lib/api';
+import type { FetchNotesResponse } from '@/lib/api';
 
-export const revalidate = 0;
+type Props = {
+  readonly initialData: FetchNotesResponse;
+};
 
-export default async function NotesPage() {
-  const response = await fetchNotes({ page: 1, perPage: 12, search: '' });
-  return <NotesClientPage initialData={response} />;
+export default function NotesClient({ initialData }: Props) {
+  return <NotesClientPage initialData={initialData} />;
 }
