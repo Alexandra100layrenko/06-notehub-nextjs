@@ -2,12 +2,25 @@
 'use client';
 
 import NotesClientPage from '@/components/NotesClientPage/NotesClientPage';
-import type { FetchNotesResponse } from '@/lib/api';
+import { fetchNotes } from '@/lib/api';
+import { useEffect, useState } from 'react';
+import Loader from '@/components/Loader/Loader';
+import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 
-type Props = {
-  readonly initialData: FetchNotesResponse;
-};
+export default function NotesClient() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default function NotesClient({ initialData }: Props) {
-  return <NotesClientPage initialData={initialData} />;
+  useEffect(() => {
+    fetchNotes({ page: 1, perPage: 12, search: '' })
+      .then((res) => setData(res))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <Loader />;
+  if (error) return <ErrorMessage />;
+
+  return <NotesClientPage initialData={data} />;
 }

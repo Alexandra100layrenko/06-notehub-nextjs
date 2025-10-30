@@ -1,13 +1,12 @@
 // app/notes/[id]/NoteDetails.tsx
 'use client';
 
-import NoteDetailsClient from '@/components/NoteDetails/NoteDetails';
+import NoteDetailsClient from '@/components/NoteDetailsClient/NoteDetailsClient';
 import type { Note } from '@/lib/api';
 
-type Props = {
-  readonly initialNote: Note;
-};
+type Props = { readonly initialNote: Note };
 
-export default function NoteDetailsClientPage({ initialNote }: Props) {
+export default function NoteDetailsClientWrapper({ initialNote }: Props) {
   return <NoteDetailsClient initialNote={initialNote} />;
 }
+

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchNoteById } from '@/lib/api';
 import type { Note } from '@/lib/api';
 import { useParams } from 'next/navigation';
-import css from './NoteDetails.module.css';
+import css from './NoteDetailsClient.module.css';
 
 type Props = { readonly initialNote: Note };
 
