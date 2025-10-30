@@ -1,6 +1,10 @@
 // components/ErrorMessage/ErrorMessage.tsx
-import styles from './ErrorMessage.module.css';
+import css from './ErrorMessage.module.css';
 
-export default function ErrorMessage() {
-  return <p className={styles.text}>There was an error, please try again...</p>;
+interface ErrorMessageProps {
+  readonly message: string;
+}
+
+export default function ErrorMessage({ message }: ErrorMessageProps) {
+  return <p className={css.text}>{message}</p>;
 }
