@@ -1,6 +1,6 @@
 // components/Loader/Loader.tsx
-import styles from './Loader.module.css'
+import css from './Loader.module.css'
 
 export default function Loader() {
-  return <p className={styles.text}>Loading...</p>;
+  return <p className={css.text}>Loading...</p>;
 }

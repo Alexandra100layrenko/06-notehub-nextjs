@@ -1,44 +1,41 @@
-// app/notes/[id]/NoteDetails.tsx
+// app/notes/[id]/NoteDetails.client.tsx
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchNoteById } from '@/lib/api';
-import Loader from '@/components/Loader/Loader';
-import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import { Note } from '@/types/note';
+import { fetchNoteById, type Note } from '@/lib/api';
+import { useParams } from 'next/navigation';
+import css from './NoteDetails.client.module.css';
 
-interface NoteDetailsClientProps {
-  readonly noteId: string;
-}
+type Props = { readonly initialNote: Note };
 
-export default function NoteDetailsClient({ noteId }: NoteDetailsClientProps) {
-  const { data, isLoading, isError, error } = useQuery<Note>({
-    queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(noteId),
-    refetchOnMount: false,
+export default function NoteDetails({ initialNote }: Props) {
+  const params = useParams();
+  const id = Array.isArray(params?.id) ? params.id[0] : params?.id ?? initialNote.id;
+
+  const { data: note, isLoading, isError, error } = useQuery<Note, Error>({
+    queryKey: ['note', id],
+    queryFn: () => fetchNoteById(id),
+    initialData: initialNote,
+    enabled: !!id,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <p>Loading, please wait...</p>;
+  if (isError || !note)
+    return <p>{error instanceof Error ? error.message : 'Something went wrong.'}</p>;
 
-  if (isError)
-    return (
-      <ErrorMessage
-        message={error instanceof Error ? error.message : 'Error loading note'}
-      />
-    );
-
-  if (!data) return <ErrorMessage message="Note not found" />;
+  const formattedDate = note.updatedAt
+    ? `Updated at: ${note.updatedAt}`
+    : `Created at: ${note.createdAt}`;
 
   return (
-    <div>
-      <h2>{data.title}</h2>
-      <p>
-        <strong>Tag:</strong> {data.tag}
-      </p>
-      <p>{data.content}</p>
-      <p>
-        <em>Created: {new Date(data.createdAt).toLocaleString()}</em>
-      </p>
+    <div className={css.container}>
+      <div className={css.item}>
+        <div className={css.header}>
+          <h2>{note.title}</h2>
+        </div>
+        <p className={css.content}>{note.content}</p>
+        <p className={css.date}>{formattedDate}</p>
+      </div>
     </div>
   );
 }
