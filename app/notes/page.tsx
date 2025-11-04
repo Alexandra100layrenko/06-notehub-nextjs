@@ -1,12 +1,22 @@
 // app/notes/page.tsx
-// app/notes/page.tsx
-import { fetchNotes, type FetchNotesResponse } from '@/lib/api';
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+import { fetchNotes } from '@/lib/api';
 import NotesClient from './Notes.client';
 
 export default async function NotesPage() {
-  // Серверный fetch только для первой страницы
-  const initialData: FetchNotesResponse = await fetchNotes({ page: 1, perPage: 12, search: '' });
+  const queryClient = new QueryClient();
 
-  return <NotesClient initialData={initialData} />;
+  await queryClient.prefetchQuery({
+    queryKey: ['notes', 1, '', 12],
+    queryFn: () => fetchNotes({ page: 1, perPage: 12, search: '' }),
+  });
+
+  const dehydratedState = dehydrate(queryClient);
+
+  return (
+    <HydrationBoundary state={dehydratedState}>
+      <NotesClient />
+    </HydrationBoundary>
+  );
 }
 

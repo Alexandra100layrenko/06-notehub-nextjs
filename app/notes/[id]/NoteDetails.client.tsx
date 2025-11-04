@@ -16,12 +16,12 @@ export default function NoteDetails({ initialNote }: Props) {
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
     initialData: initialNote,
+    refetchOnMount: false, // 🔹 важливо
     enabled: !!id,
   });
 
   if (isLoading) return <p>Loading, please wait...</p>;
-  if (isError || !note)
-    return <p>{error instanceof Error ? error.message : 'Something went wrong.'}</p>;
+  if (isError || !note) return <p>{error?.message ?? 'Something went wrong.'}</p>;
 
   const formattedDate = note.updatedAt
     ? `Updated at: ${note.updatedAt}`

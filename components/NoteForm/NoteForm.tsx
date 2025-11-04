@@ -5,12 +5,12 @@ import { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote } from '@/lib/api'
+import { createNote } from '@/lib/api';
 import type { NoteTag } from '@/types/note';
 import css from './NoteForm.module.css';
 
 interface NoteFormProps {
-  readonly onCancel: () => void; // close modal
+  readonly onCancel: () => void;
 }
 
 const TAGS: NoteTag[] = ['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'];
@@ -25,27 +25,25 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (payload: { title: string; content: string; tag: NoteTag }) =>
-      createNote(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-    }
+    mutationFn: createNote,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
+    onSettled: () => {}, // завершення мутації
   });
 
   useEffect(() => {
-    if (mutation.isSuccess) {
-      onCancel(); // close modal
-    }
+    if (mutation.isSuccess) onCancel();
   }, [mutation.isSuccess, onCancel]);
 
   return (
     <Formik
       initialValues={{ title: '', content: '', tag: 'Todo' as NoteTag }}
       validationSchema={Schema}
-      onSubmit={(values, { setSubmitting }) => {
-        
-        mutation.mutate(values);
-        setSubmitting(false);
+      onSubmit={async (values, { setSubmitting }) => {
+        try {
+          await mutation.mutateAsync(values);
+        } finally {
+          setSubmitting(false); // 🔹 тільки після завершення мутації
+        }
       }}
     >
       {({ isSubmitting }) => (
